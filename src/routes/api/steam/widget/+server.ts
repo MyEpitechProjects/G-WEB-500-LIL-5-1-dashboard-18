@@ -1,0 +1,35 @@
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import {getAppTrailer} from '$lib/widgets/steam/getTrailer';
+import {patchSteamWidgetHtml} from '$lib/widgets/steam/patchSteamWidget';
+
+
+
+
+const CACHE_TTL_MS = 10 * 60 * 1000;
+const cache = new Map<string, { html: string; expires: number }>();
+
+
+export const GET: RequestHandler = async ({ url, fetch }) => {
+	const appid = url.searchParams.get('appid');
+	if (!appid || !/^\d+$/.test(appid))
+		error(400, 'Appid invalide.');
+	const cached = cache.get(appid);
+	if (cached && cached.expires > Date.now())
+		return new Response(cached.html, {
+			headers: { 'content-type': 'text/html' }
+		});
+	const trailer = await getAppTrailer(appid);
+	console.log(trailer);
+	if (!trailer){
+		return error(404, `NO_TRAILER`);;
+	}
+	const response = await fetch(`https://store.steampowered.com/widget/${appid}/`);
+	if (!response.ok)
+		error(404, `NO_WIDGET`);
+	const html = patchSteamWidgetHtml(await response.text(), trailer);
+	cache.set(appid, { html, expires: Date.now() + CACHE_TTL_MS });
+	return new Response(html, {
+		headers: { 'content-type': 'text/html' }
+	});
+};
