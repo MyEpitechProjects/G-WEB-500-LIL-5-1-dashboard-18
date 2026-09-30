@@ -1,5 +1,8 @@
 import { defineWidget } from '$lib/core/registry';
 import TrailerLoop from './TrailerLoop.svelte';
+import steamTags from './steam_tags_options.json';
+import steamTagsIds from './steam_tags_ids.json';
+import steamLangs from './steam_langs.json';
 
 export interface SteamParams {
 	lang: string;
@@ -18,11 +21,6 @@ export interface SteamData {
 	games: string;
 }
 
-/**
- * Le widget officiel Steam ne peut pas être embarqué tel quel (X-Frame-Options).
- * `/api/steam/widget` le télécharge côté serveur, le patche, et renvoie le HTML
- * brut que l'on injecte ici via `srcdoc`.
- */
 export const trailerLoop = defineWidget<SteamParams, SteamData>({
 	service: 'steam',
 	name: 'trailer_loop',
@@ -35,10 +33,13 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 		{
 			name: 'lang',
 			label: 'Widget language',
-			type: 'string',
+			type: 'select',
 			default: 'english',
 			required: true,
-			help: ''
+			help: '',
+			options: Object.values(steamLangs).sort((a, b) =>
+				a.label.localeCompare(b.label)
+			)
 		},
 		{
 			name: 'sales_only',
@@ -53,16 +54,24 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 			label: 'Game tags',
 			type: 'multiselect',
 			default: [],
-			required: true,
+			required: false,
 			help: '',
-			options: [
-				{ value: 'action', label: 'Action' },
-				{ value: 'adventure', label: 'Adventure' },
-				{ value: 'rpg', label: 'RPG' },
-				{ value: 'strategy', label: 'Strategy' },
-				{ value: 'indie', label: 'Indie' }
-			]
+			options: Object.values(steamTags).sort((a, b) =>
+				a.label.localeCompare(b.label)
+			)
 		},
+		{
+			name: 'exclude_game_tag',
+			label: 'Exclude Game tags',
+			type: 'multiselect',
+			default: ["sexual_content", "nudity", "hentai"],
+			required: false,
+			help: '',
+			options: Object.values(steamTags).sort((a, b) =>
+				a.label.localeCompare(b.label)
+			)
+		},
+
 		{
 			name: 'max_price',
 			label: 'Max games prices',
@@ -73,27 +82,43 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 		}
 	],
 	async load({ params, fetch, signal }) {
-		const appids = ["2161700", "1687950", "1158850", "2187220", "2401970", "787480",
-		"798460", "589360", "2993780", "2799860", "2450450"];
-		
-		/*
-		const appids = params.appids
-			.split(',')
-			.map((id) => id.trim())
-			.filter(Boolean);
+		const tags = params.game_tag;
+		const untags = params.exclude_game_tag
 
-		const games = await Promise.all(
-			appids.map(async (appid) => {
-				const url = new URL('/api/steam/widget', location.origin);
-				url.searchParams.set('appid', appid);
-				const response = await fetch(url, { signal });
-				if (!response.ok) throw new Error(`Widget Steam indisponible pour l’appid ${appid}.`);
-				const { html } = await response.json();
-				return { appid, html };
-			})
-		);*/
+		const tagIds = Array.isArray(tags)
+			? tags
+					.map((tag) => steamTagsIds[tag])
+					.filter(Boolean)
+					.join(',')
+			: '';
+		const untagIds = Array.isArray(untags)
+			? untags
+					.map((tag) => steamTagsIds[tag])
+					.filter(Boolean)
+					.join(',')
+			: '';
 
-		return { games: appids };
+		const query = new URLSearchParams({
+			lang: String(params.lang),
+			tags: tagIds,
+			max_price: Number(params.max_price),
+			sales: Number(params.sales_only),
+			untags: untagIds,
+		});
+
+		const response = await fetch(`/api/steam/search?${query.toString()}`, {
+			signal
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to fetch Steam games: ${response.status}`);
+		}
+
+		const appids: number[] = await response.json();
+
+		return {
+			games: appids.map(String)
+		};
 	},
 	component: TrailerLoop
 });
