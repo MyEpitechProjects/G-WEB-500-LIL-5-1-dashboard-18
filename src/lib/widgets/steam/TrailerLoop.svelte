@@ -53,9 +53,6 @@
 		height: 100%;
 		border-radius: 4px;
 		background: #1b2838;
-		/* le contenu réel vit dans un Shadow DOM mis à l'échelle (0.7) par le
-		   CSS injecté côté serveur ; overflow: hidden garantit qu'il ne
-		   dépasse jamais ce cadre quelle que soit sa taille intrinsèque. */
 		overflow: hidden;
 	}
 

@@ -3,13 +3,14 @@ import { defaultParams, getWidget } from '$lib/core/registry';
 
 const STORAGE_KEY = 'dashboard:instances';
 
-/**
- * État du dashboard.
- *
- * La persistance passe par une petite couche `save()` / `load()` : aujourd'hui
- * localStorage, à remplacer par des appels API une fois l'auth en place
- * (les instances doivent être liées au compte utilisateur).
- */
+function generateId(): string {
+	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+		return crypto.randomUUID();
+	}
+
+	return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
 class DashboardState {
 	instances = $state<WidgetInstance[]>([]);
 
@@ -33,7 +34,7 @@ class DashboardState {
 		if (!def) throw new Error(`Widget inconnu : ${service}.${widget}`);
 
 		const instance: WidgetInstance = {
-			id: crypto.randomUUID(),
+			id: generateId(),
 			service,
 			widget,
 			params: { ...defaultParams(def), ...params },

@@ -1,15 +1,3 @@
-// src/lib/widgets/steam/mountSteamWidget.ts
-//
-// Monte le fragment HTML renvoyé par /api/steam/widget dans un <div> via
-// Shadow DOM, à la place d'un iframe :
-// - Shadow DOM isole le CSS du widget (#widget, .desc, ...) du reste de la
-//   page, comme le ferait un iframe, mais sans les contraintes de mise à
-//   l'échelle d'un iframe : le contenu reste dans le flux normal du DOM et
-//   ne peut pas dépasser le conteneur si celui-ci a overflow: hidden ;
-// - un innerHTML n'exécute jamais les <script> qu'il contient, donc dash.js
-//   est chargé et initialisé ici, en JS, avec un accès direct à la <video> ;
-// - le clic sur « suivant » est un vrai addEventListener sur l'élément du
-//   Shadow DOM : plus besoin du pont postMessage utilisé avec l'iframe.
 
 interface DashJsPlayer {
 	initialize(el: HTMLVideoElement, url: string, autoplay: boolean): void;
@@ -25,7 +13,6 @@ declare global {
 const DASH_JS_SRC = 'https://cdn.dashjs.org/latest/dash.all.min.js';
 let dashJsReady: Promise<void> | null = null;
 
-/** Charge dash.js une seule fois pour toute la page, quel que soit le nombre d'instances du widget. */
 function loadDashJs(): Promise<void> {
 	if (window.dashjs) return Promise.resolve();
 	if (dashJsReady) return dashJsReady;
@@ -42,7 +29,6 @@ function loadDashJs(): Promise<void> {
 
 export interface MountSteamWidgetParams {
 	html: string;
-	/** appelé quand l'utilisateur clique le bouton « suivant » injecté dans le widget */
 	onNext: () => void;
 }
 
@@ -79,7 +65,6 @@ export function mountSteamWidget(node: HTMLDivElement, params: MountSteamWidgetP
 				player.initialize(video, mpdUrl, true);
 			}
 		} catch {
-			// pas de lecteur vidéo dispo : le poster de la capsule reste affiché
 		}
 	}
 

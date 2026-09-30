@@ -6,10 +6,6 @@ export function widgetKey(service: string, name: string): string {
 	return `${service}.${name}`;
 }
 
-/**
- * Helper typé : garde l'inférence sur les params et les données.
- * À utiliser dans chaque fichier de widget.
- */
 export function defineWidget<P extends WidgetParams, D>(
 	def: WidgetDefinition<P, D>
 ): WidgetDefinition<P, D> {
@@ -42,12 +38,10 @@ export function listServices(): { name: string; widgets: WidgetDefinition[] }[] 
 	return [...byService].map(([name, list]) => ({ name, widgets: list }));
 }
 
-/** Valeurs par défaut d'un widget, prêtes à remplir le formulaire de config. */
 export function defaultParams(def: WidgetDefinition): WidgetParams {
 	return Object.fromEntries(def.params.map((p) => [p.name, p.default]));
 }
 
-/** about.json n'autorise que integer et string. */
 function apiType(param: ParamSpec): 'integer' | 'string' {
 	return param.type === 'integer' || param.type === 'number' ? 'integer' : 'string';
 }
