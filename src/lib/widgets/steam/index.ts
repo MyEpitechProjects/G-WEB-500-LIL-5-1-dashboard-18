@@ -71,7 +71,6 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 				a.label.localeCompare(b.label)
 			)
 		},
-
 		{
 			name: 'max_price',
 			label: 'Max games prices',
