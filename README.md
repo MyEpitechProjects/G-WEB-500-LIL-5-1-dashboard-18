@@ -1,92 +1,98 @@
 # 🚀 Dashboard
 
-The **Dashboard** project is a web application developed by Epitech, inspired by service aggregators such as Netvibes and iGoogle. It is a **customizable dashboard** that centralizes real-time information by connecting to various third-party APIs.
+A customizable dashboard (Epitech project) that gathers information from several services in real time. Each user has an account, subscribes to services, and builds a personal dashboard from configurable widgets.
 
----
+## ✨ Features
 
-## 📋 Prerequisites
+* **Accounts**: registration with email confirmation, login/logout, hashed passwords (scrypt), server-side sessions in an HttpOnly cookie.
 
-Before you begin, ensure you have the following installed on your machine:
+* **Services & subscriptions**: a service groups widgets. Some are available by default (weather), others require subscribing from the **Services** page (Steam: requires linking your Steam account first).
 
-* **[Node.js](https://nodejs.org/)** (v18.0.0 or higher recommended)
-* A package manager: **npm** (included with Node.js), **pnpm**, or **yarn**
+* **Dashboard**: add, reconfigure, move (drag by the header, or `Alt` + arrow keys) and delete widget instances. The layout is stored per user in the database. Two instances of the same widget can have different configurations.
 
-To check your installed versions:
+* **Timer**: a single timer refreshes every widget at the refresh rate chosen for each instance.
+
+* `GET /about.json`: lists the services and widgets (generated from the widget registry).
+
+## 🧩 Services and widgets
+
+| Service | Widget | Needs a linked account | Main parameters | 
+| ----- | ----- | ----- | ----- | 
+| `weather` | `city_temperature` | no | city, units, display mode, details to show | 
+| `steam` | `trailer_loop` | yes (subscription) | language, tags, excluded tags, sales only, max price | 
+| `steam` | `owned_games_news` | yes | number of news, number of games, news per game, game selection (recent / most played), official announcements only, excerpt length | 
+
+## 🐳 Run with Docker
+
 ```bash
-node -v
-npm -v
+cp .env.example .env        # then fill in STEAM_API_KEY (see below)
+docker-compose build
+docker-compose up
 ```
 
----
+* App: <http://localhost:8080> (`/about.json` is public).
 
-## 📥 Installation
+* Test mailbox (Mailpit): <http://localhost:8025> — confirmation emails land here.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/EpitechPGE3-2026/G-WEB-500-LIL-5-1-dashboard-18.git
-   cd G-WEB-500-LIL-5-1-dashboard-18
-   ```
+* The SQLite database is stored in the `db-data` volume.
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-   *(Or use `pnpm install` / `yarn install` depending on your setup)*
+Create an account, open the confirmation link from Mailpit, then log in.
 
----
+### 🎮 Steam setup
+
+1. Create a Web API key at <https://steamcommunity.com/dev/apikey> and put it in `.env` as `STEAM_API_KEY`.
+
+2. In **Services**, click *Link my account and subscribe* on Steam: you are redirected to Steam to sign in, then brought back and automatically subscribed.
+
+3. For the `owned_games_news` widget to see your library, your Steam profile's **Game details** must be public.
+
+> Steam does not implement OAuth 2.0: accounts are linked with **OpenID 2.0** (the user proves their SteamID64). Game data is then fetched server-side using the API key.
 
 ## 🏃‍♂️ Local Development
 
-Start the local development server with Hot Module Replacement (HMR):
+Requires Node.js 22.
 
 ```bash
-npm run dev
+cp .env.example .env
+npm install
+npm run dev          # https://localhost:8080 (self-signed certificate)
 ```
 
-By default, the app will be accessible at:
-👉 **`http://localhost:8080/`**
+Without `SMTP_HOST`, confirmation links are printed directly in the server console.
 
-To automatically open the app in your default browser on startup:
-```bash
-npm run dev -- --open
-```
+Useful scripts: `npm run check` (type checking), `npm run build`, `npm run db:generate` (generate a migration after editing `src/lib/server/db/schema.ts`). Migrations in `drizzle/` are applied automatically at startup.
 
----
+## ⚙️ Configuration
 
-## 🛠️ Compilation & Production Build
-
-To compile and optimize the application for production:
-
-```bash
-npm run build
-```
-
-This generates a `dist/` folder (or `.svelte-kit/` / `build/` if using SvelteKit) containing optimized HTML, CSS, and JS assets ready to be deployed.
-
----
-
-## 🔍 Preview Production Build
-
-To test the production build locally after running `npm run build`:
-
-```bash
-npm run preview
-```
-
-The app will typically run at `http://localhost:4173`.
-
----
+| Variable | Purpose | Default | 
+| ----- | ----- | ----- | 
+| `ORIGIN` | Public URL of the app (**required behind plain HTTP**, otherwise form submissions are rejected) | `http://localhost:8080` in compose | 
+| `STEAM_API_KEY` | Steam Web API key | — | 
+| `DATABASE_PATH` | SQLite database file | `./data/dashboard.db` (`/data/dashboard.db` in Docker) | 
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` | Outgoing mail | links logged in the console if no `SMTP_HOST` | 
 
 ## 📁 Project Structure Overview
 
 ```text
-├── public/          # Static assets (favicons, manifest, etc.)
-├── src/
-│   ├── routes/      # Sveltes routes endpoint/api
-│   ├── lib/         # Reusable components, modules, or stores
-│   ├── app.html     # HTML entry template
-│   └── app.d.ts     # Application entry point
-├── index.html       # HTML entry template
-├── package.json     # Dependencies, scripts, and metadata
-└── vite.config.js   # Vite / Svelte plugin configuration
+src/
+├── hooks.server.ts            # session → locals.user, protects /api/*
+├── routes/
+│   ├── (auth)/                # login, register, confirm
+│   ├── (app)/                 # dashboard (/) and Services page — requires a session
+│   ├── auth/steam/            # Steam OpenID link flow (start + callback)
+│   ├── api/dashboard/         # widget instances CRUD + ordering
+│   ├── api/steam/             # Steam endpoints used by the widgets
+│   └── about.json/
+└── lib/
+    ├── core/                  # widget registry, types, timer, services metadata, param validation
+    ├── widgets/<service>/     # one folder per service
+    ├── components/            # grid, widget frame/host, config dialog
+    ├── stores/dashboard.svelte.ts   # client state, synced with the API
+    └── server/                # db (Drizzle schema), auth, mail, subscriptions, steam
 ```
+
+* **Stack**: SvelteKit (Svelte 5), SQLite via Drizzle ORM (`better-sqlite3`), Node adapter, Docker.
+
+* **Adding a widget**: create a `WidgetDefinition` (params, `load`, component) in `src/lib/widgets/<service>/`, then add it to the `registerAllWidgets()` function. It will then appear in the dialog and in `/about.json`.
+
+* **Security**: widget configuration is validated server-side against the widget's declared params. Every `/api/*` route requires a session and (for service routes) an active subscription. All queries are scoped to the logged-in user. Login is rate-limited.
