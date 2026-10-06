@@ -5,21 +5,27 @@
 
 	let {
 		instance = null,
+		subscribed,
+		error = null,
 		onclose,
 		onsubmit
 	}: {
 		/** null = ajout, sinon reconfiguration */
 		instance?: WidgetInstance | null;
+		/** services auxquels l'utilisateur est abonné : seuls leurs widgets sont proposés */
+		subscribed: string[];
+		/** message d'erreur renvoyé par le serveur */
+		error?: string | null;
 		onclose: () => void;
 		onsubmit: (result: {
 			service: string;
 			widget: string;
 			params: WidgetParams;
 			refreshRate: number;
-		}) => void;
+		}) => void | Promise<void>;
 	} = $props();
 
-	const services = listServices();
+	const services = listServices().filter((s) => subscribed.includes(s.name));
 	const editing = instance !== null;
 
 	let selected = $state<WidgetDefinition | null>(
@@ -78,6 +84,11 @@
 							</button>
 						{/each}
 					{/each}
+					{#if services.length === 0}
+						<p class="empty">Aucun service disponible. <a href="/services">Gérer mes services</a></p>
+					{:else}
+						<p class="more"><a href="/services">Gérer mes services</a></p>
+					{/if}
 				</div>
 			{/if}
 
@@ -96,7 +107,9 @@
 		</div>
 
 		<footer>
-			{#if missing.length > 0}
+			{#if error}
+				<span class="missing" role="alert">{error}</span>
+			{:else if missing.length > 0}
 				<span class="missing">À renseigner : {missing.join(', ')}</span>
 			{/if}
 			<button class="ghost" onclick={onclose}>Annuler</button>
@@ -215,6 +228,16 @@
 	.entry span {
 		font-size: 0.72rem;
 		color: var(--text-muted);
+	}
+
+	.more {
+		margin: 0.75rem 0 0;
+		font-size: 0.72rem;
+	}
+
+	.more a,
+	.empty a {
+		color: var(--accent);
 	}
 
 	.config {

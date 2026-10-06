@@ -4,13 +4,9 @@ import { buildAboutServices } from '$lib/core/registry';
 import { registerAllWidgets } from '$lib/widgets';
 import type { AboutResponse } from '$lib/core/types';
 
-/**
- * GET /about.json — décrit le catalogue de services et de widgets.
- * La liste est dérivée du registre, donc elle reste synchronisée avec le code.
- */
+
 export const GET: RequestHandler = ({ getClientAddress }) => {
 	registerAllWidgets();
-
 	const body: AboutResponse = {
 		client: { host: getClientAddress() },
 		server: {
