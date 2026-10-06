@@ -55,9 +55,7 @@ async function geocodeCity(city: string, fetch: typeof globalThis.fetch, signal:
 	url.searchParams.set('name', city);
 	url.searchParams.set('count', '1');
 	url.searchParams.set('language', 'fr');
-
 	const response = await fetch(url, { signal });
-
 	if (!response.ok) {
 		throw new Error(
 			'Service de géocodage indisponible.'
@@ -65,7 +63,6 @@ async function geocodeCity(city: string, fetch: typeof globalThis.fetch, signal:
 	}
 	const data: GeoResponse = await response.json();
 	const place = data.results?.[0];
-
 	if (!place) {
 		throw new Error(`Ville introuvable : ${city}`);
 	}
@@ -76,17 +73,14 @@ function createWeatherUrl(place: GeoPlace, params: WeatherParams): URL {
 	const url = new URL(
 		'https://api.open-meteo.com/v1/forecast'
 	);
-
 	url.searchParams.set(
 		'latitude',
 		String(place.latitude)
 	);
-
 	url.searchParams.set(
 		'longitude',
 		String(place.longitude)
 	);
-
 	url.searchParams.set(
 		'current',
 		[
@@ -99,7 +93,6 @@ function createWeatherUrl(place: GeoPlace, params: WeatherParams): URL {
 			'cloud_cover'
 		].join(',')
 	);
-
 	setTemperatureUnit(url, params.unit);
 	setWindUnit(url, params.wind_unit);
 
@@ -128,7 +121,6 @@ function setWindUnit(
 		mph: 'mph',
 		kn: 'kn'
 	}[unit] ?? 'kmh';
-
 	url.searchParams.set(
 		'wind_speed_unit',
 		windUnit
@@ -141,15 +133,12 @@ async function fetchWeather(
 	signal: AbortSignal
 ): Promise<WeatherCurrent> {
 	const response = await fetch(url, { signal });
-
 	if (!response.ok) {
 		throw new Error(
 			'Service météo indisponible.'
 		);
 	}
-
 	const data: WeatherResponse = await response.json();
-
 	return data.current;
 }
 
