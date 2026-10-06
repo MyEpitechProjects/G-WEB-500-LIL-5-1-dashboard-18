@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { WidgetRenderProps } from '$lib/core/types';
 	import type { SteamData, SteamParams } from './index';
-	import { getWidgetHtml } from '$lib/widgets/steam/getWidget';
-	import { mountSteamWidget } from '$lib/widgets/steam/mountSteamWidget';
+	import { getWidgetHtml } from '$lib/widgets/steam/trailer/getWidget';
+	import { mountSteamWidget } from '$lib/widgets/steam/trailer/mountSteamWidget';
 
 	let { data, params }: WidgetRenderProps<SteamParams, SteamData> = $props();
 

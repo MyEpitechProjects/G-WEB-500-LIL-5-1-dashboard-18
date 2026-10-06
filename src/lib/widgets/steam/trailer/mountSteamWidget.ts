@@ -14,9 +14,10 @@ const DASH_JS_SRC = 'https://cdn.dashjs.org/latest/dash.all.min.js';
 let dashJsReady: Promise<void> | null = null;
 
 function loadDashJs(): Promise<void> {
-	if (window.dashjs) return Promise.resolve();
-	if (dashJsReady) return dashJsReady;
-
+	if (window.dashjs)
+		return Promise.resolve();
+	if (dashJsReady)
+		return dashJsReady;
 	dashJsReady = new Promise((resolve, reject) => {
 		const script = document.createElement('script');
 		script.src = DASH_JS_SRC;
@@ -47,17 +48,15 @@ export function mountSteamWidget(node: HTMLDivElement, params: MountSteamWidgetP
 	async function render({ html, onNext }: MountSteamWidgetParams): Promise<void> {
 		cleanup();
 		shadow.innerHTML = html;
-
 		const nextButton = shadow.querySelector<HTMLElement>('.btn_next_in_queue_trigger');
 		if (nextButton) {
 			nextButton.addEventListener('click', onNext);
 			unbindNext = () => nextButton.removeEventListener('click', onNext);
 		}
-
 		const video = shadow.querySelector<HTMLVideoElement>('video[data-mpd-url]');
 		const mpdUrl = video?.dataset.mpdUrl;
-		if (!video || !mpdUrl) return;
-
+		if (!video || !mpdUrl)
+			return;
 		try {
 			await loadDashJs();
 			if (shadow.contains(video) && window.dashjs) {
@@ -67,9 +66,7 @@ export function mountSteamWidget(node: HTMLDivElement, params: MountSteamWidgetP
 		} catch {
 		}
 	}
-
 	void render(params);
-
 	return {
 		update(next: MountSteamWidgetParams) {
 			void render(next);

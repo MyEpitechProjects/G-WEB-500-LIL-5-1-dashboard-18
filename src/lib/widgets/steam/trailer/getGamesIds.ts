@@ -9,12 +9,9 @@ export async function getGameIds(lang: string, tags: string, maxPrice: number, s
         if (!response.ok) {
             return [];
         }
-
         const html = await response.text();
         const $ = cheerio.load(html);
-
         const appIds: number[] = [];
-
         $(".search_result_row").each((_, element) => {
             const appId = $(element).attr("data-ds-appid");
 
@@ -22,7 +19,6 @@ export async function getGameIds(lang: string, tags: string, maxPrice: number, s
                 appIds.push(Number(appId));
             }
         });
-
         return appIds;
 
     } catch {

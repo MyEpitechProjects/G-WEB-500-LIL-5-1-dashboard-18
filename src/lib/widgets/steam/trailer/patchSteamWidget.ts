@@ -124,7 +124,6 @@ export function patchSteamWidgetHtml(
 		$(".desc").prepend(videoTag);
 	}
 	const purchaseAction = $(".game_purchase_action_bg");
-
 	const nextButton = `
 	<div id="nextInDiscoveryQueue" class="next_in_queue_area">
 		<div

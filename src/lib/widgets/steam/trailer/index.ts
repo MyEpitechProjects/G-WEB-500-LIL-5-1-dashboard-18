@@ -32,7 +32,7 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 	params: [
 		{
 			name: 'lang',
-			label: 'Widget language',
+			label: 'Games language',
 			type: 'select',
 			default: 'english',
 			required: true,
@@ -83,7 +83,6 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 	async load({ params, fetch, signal }) {
 		const tags = params.game_tag;
 		const untags = params.exclude_game_tag
-
 		const tagIds = Array.isArray(tags)
 			? tags
 					.map((tag) => steamTagsIds[tag])
@@ -96,7 +95,6 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 					.filter(Boolean)
 					.join(',')
 			: '';
-
 		const query = new URLSearchParams({
 			lang: String(params.lang),
 			tags: tagIds,
@@ -104,17 +102,13 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 			sales: Number(params.sales_only),
 			untags: untagIds,
 		});
-
 		const response = await fetch(`/api/steam/search?${query.toString()}`, {
 			signal
 		});
-
 		if (!response.ok) {
 			throw new Error(`Failed to fetch Steam games: ${response.status}`);
 		}
-
 		const appids: number[] = await response.json();
-
 		return {
 			games: appids.map(String)
 		};
