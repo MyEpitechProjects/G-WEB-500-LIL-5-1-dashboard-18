@@ -11,6 +11,8 @@ services:
       DATABASE_PATH: /data/dashboard.db
       # Clé de la Web API Steam (https://steamcommunity.com/dev/apikey), requise pour le widget d'actualités
       STEAM_API_KEY: ${STEAM_API_KEY:-}
+      # Clé de l'API SNCF (https://numerique.sncf.com/), requise pour les widgets SNCF
+      SNCF_API_KEY: ${SNCF_API_KEY:-}
       # Boîte mail de test (Mailpit) : les emails de confirmation y arrivent, sur http://localhost:8025
       SMTP_HOST: mailpit
       SMTP_PORT: 1025

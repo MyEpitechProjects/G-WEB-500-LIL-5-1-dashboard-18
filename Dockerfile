@@ -3,7 +3,7 @@ WORKDIR /app
 # better-sqlite3 est un module natif : on prévoit de quoi le compiler si aucun binaire précompilé n'existe
 RUN apk add --no-cache python3 make g++
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build && npm prune --omit=dev
 
