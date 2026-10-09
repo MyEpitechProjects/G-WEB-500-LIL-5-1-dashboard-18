@@ -10,8 +10,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		await getGameIds(
 			url.searchParams.get('lang') ?? '',
 			url.searchParams.get('tags') ?? '',
-			url.searchParams.get('max_price') ?? -1,
-			url.searchParams.get('sales') ?? 0,
+			Number(url.searchParams.get('max_price')) || -1,
+			Number(url.searchParams.get('sales')) || 0,
 			url.searchParams.get('untags') ?? '')
 	);
 };

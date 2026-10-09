@@ -41,12 +41,12 @@ export const DELETE: RequestHandler = ({ locals, params }) => {
 	if (!getOwnedRow(userId, params.id))
 		error(404, 'Widget introuvable.');
 	const db = getDb();
-	db.transaction((tx) => {
+	db.transaction((tx: any) => {
 		tx.delete(widgetInstances)
 			.where(and(eq(widgetInstances.id, params.id), eq(widgetInstances.userId, userId)))
 			.run();
 		const rest = tx.select({ id: widgetInstances.id }).from(widgetInstances).where(eq(widgetInstances.userId, userId)).orderBy(asc(widgetInstances.position)).all();
-		rest.forEach((r, position) =>
+		rest.forEach((r: any, position: number) =>
 			tx.update(widgetInstances).set({ position }).where(eq(widgetInstances.id, r.id)).run()
 		);
 	});

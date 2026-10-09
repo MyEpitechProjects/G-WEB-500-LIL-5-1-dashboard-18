@@ -21,7 +21,7 @@ export const GET: RequestHandler = async ({ url, fetch, locals }) => {
 		return new Response(cached.html, {
 			headers: { 'content-type': 'text/html' }
 		});
-	const trailer = await getAppTrailer(appid);
+	const trailer = await getAppTrailer(Number(appid));
 	if (!trailer){
 		return error(404, `NO_TRAILER`);;
 	}

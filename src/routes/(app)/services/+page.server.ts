@@ -17,8 +17,9 @@ const ERRORS: Record<string, string> = {
 };
 
 export const load: PageServerLoad = ({ locals, url }) => {
+	if (!locals.user) redirect(303, '/login');
 	registerAllWidgets();
-	const subscribed = new Set(getSubscribedServices(locals.user!.id));
+	const subscribed = new Set(getSubscribedServices(locals.user.id));
 	const widgetCount = new Map(listServices().map((s) => [s.name, s.widgets.length]));
 
 	return {
@@ -26,7 +27,7 @@ export const load: PageServerLoad = ({ locals, url }) => {
 			...s,
 			subscribed: subscribed.has(s.name),
 			widgets: widgetCount.get(s.name) ?? 0,
-			linked: s.provider ? getLinkedAccount(locals.user!.id, s.provider) !== null : false
+			linked: s.provider ? getLinkedAccount(locals.user.id, s.provider) !== null : false
 		})),
 		notice: url.searchParams.get('linked') ? 'Compte Steam lié, service activé.' : null,
 		error: ERRORS[url.searchParams.get('error') ?? ''] ?? null
@@ -41,7 +42,8 @@ export const actions: Actions = {
 			return fail(400, { error: 'Service inconnu.' });
 		if (service.provider === 'steam')
 			redirect(303, '/auth/steam');
-		subscribe(locals.user!.id, service.name);
+		if (!locals.user) redirect(303, '/login');
+		subscribe(locals.user.id, service.name);
 		return { notice: `Abonné au service ${service.label}.` };
 	},
 
@@ -52,7 +54,8 @@ export const actions: Actions = {
 			return fail(400, { error: 'Service inconnu.' });
 		if (service.defaultSubscribed)
 			return fail(400, { error: 'Ce service est inclus d’office.' });
-		unsubscribe(locals.user!.id, service.name);
+		if (!locals.user) redirect(303, '/login');
+		unsubscribe(locals.user.id, service.name);
 		return { notice: `Désabonné du service ${service.label}.` };
 	}
 };

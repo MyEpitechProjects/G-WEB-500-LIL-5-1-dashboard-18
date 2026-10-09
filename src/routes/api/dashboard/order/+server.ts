@@ -10,11 +10,11 @@ export const PUT: RequestHandler = async ({ locals, request }) => {
 	if (!Array.isArray(ids) || ids.some((i) => typeof i !== 'string'))
 		error(400, 'Liste invalide.');
 	const db = getDb();
-	db.transaction((tx) => {
+	db.transaction((tx: any) => {
 		const owned = new Set(
-			tx.select({ id: widgetInstances.id }).from(widgetInstances).where(eq(widgetInstances.userId, userId)).all().map((r) => r.id)
+			tx.select({ id: widgetInstances.id }).from(widgetInstances).where(eq(widgetInstances.userId, userId)).all().map((r: any) => r.id)
 		);
-		if (ids.length !== owned.size || new Set(ids).size !== ids.length || ids.some((i) => !owned.has(i))) {
+		if (ids.length !== owned.size || new Set(ids).size !== ids.length || ids.some((i: unknown) => !owned.has(i))) {
 			error(400, 'La liste ne correspond pas à vos widgets.');
 		}
 		(ids as string[]).forEach((id, position) =>

@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ locals, cookies, url }) => {
 	const owner = db.select({ userId: linkedAccounts.userId }).from(linkedAccounts).where(and(eq(linkedAccounts.provider, 'steam'), eq(linkedAccounts.providerAccountId, steamId))).get();
 	if (owner && owner.userId !== locals.user.id)
 		redirect(303, '/services?error=steam_taken');
-	db.transaction((tx) => {
+	db.transaction((tx: any) => {
 		tx.delete(linkedAccounts)
 			.where(and(eq(linkedAccounts.userId, locals.user!.id), eq(linkedAccounts.provider, 'steam')))
 			.run();
