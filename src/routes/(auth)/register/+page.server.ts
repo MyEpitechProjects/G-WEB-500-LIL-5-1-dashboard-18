@@ -52,6 +52,6 @@ export const actions: Actions = {
 				values
 			});
 		}
-		return { success: true, email };
+		redirect(303, `/login?registered=1&email=${encodeURIComponent(email)}`);
 	}
 };

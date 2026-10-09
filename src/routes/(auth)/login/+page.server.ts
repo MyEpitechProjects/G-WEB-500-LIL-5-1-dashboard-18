@@ -15,7 +15,11 @@ import { sendConfirmationEmail } from '$lib/server/mail';
 export const load: PageServerLoad = ({ locals, url }) => {
 	if (locals.user)
 		redirect(303, '/');
-	return { confirmed: url.searchParams.get('confirmed') === '1' };
+	return { 
+		confirmed: url.searchParams.get('confirmed') === '1',
+		registered: url.searchParams.get('registered') === '1',
+		email: url.searchParams.get('email')
+	};
 };
 
 export const actions: Actions = {

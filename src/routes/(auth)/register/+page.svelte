@@ -6,14 +6,7 @@
 
 <svelte:head><title>Inscription · Dashboard</title></svelte:head>
 
-{#if form?.success}
-	<h2>Vérifiez votre boîte mail</h2>
-	<p class="notice">
-		Un lien de confirmation a été envoyé à <strong>{form.email}</strong>. Il est valable 24 h : vous
-		pourrez vous connecter une fois votre adresse confirmée.
-	</p>
-	<p class="alt"><a href="/login">Retour à la connexion</a></p>
-{:else}
+
 	<h2>Créer un compte</h2>
 	<form method="POST" use:enhance>
 		{#if form?.errors?.form}<p class="form-error" role="alert">{form.errors.form}</p>{/if}
@@ -66,4 +59,3 @@
 		<button type="submit">S’inscrire</button>
 	</form>
 	<p class="alt">Déjà un compte ? <a href="/login">Se connecter</a></p>
-{/if}

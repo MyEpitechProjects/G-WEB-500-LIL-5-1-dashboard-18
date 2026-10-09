@@ -12,6 +12,13 @@
 	<p class="notice" role="status">Adresse confirmée. Vous pouvez vous connecter.</p>
 {/if}
 
+{#if data.registered}
+	<p class="notice" role="status">
+		Un lien de confirmation a été envoyé à <strong>{data.email}</strong>. Il est valable 24 h : vous
+		pourrez vous connecter une fois votre adresse confirmée.
+	</p>
+{/if}
+
 <form method="POST" use:enhance>
 	{#if form?.error}<p class="form-error" role="alert">{form.error}</p>{/if}
 

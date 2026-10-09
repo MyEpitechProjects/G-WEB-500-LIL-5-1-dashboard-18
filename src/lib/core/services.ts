@@ -20,6 +20,12 @@ export const SERVICES: ServiceMeta[] = [
 			'Trailers de jeux et actualités de votre bibliothèque. Nécessite de lier votre compte Steam.',
 		defaultSubscribed: false,
 		provider: 'steam'
+	},
+	{
+		name: 'sncf',
+		label: 'SNCF',
+		description: 'Recherche de trajets et informations sur les perturbations du réseau SNCF.',
+		defaultSubscribed: true
 	}
 ];
 
