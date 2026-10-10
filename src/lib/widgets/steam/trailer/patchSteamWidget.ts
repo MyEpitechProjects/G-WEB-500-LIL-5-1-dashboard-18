@@ -99,6 +99,40 @@ video::-webkit-media-controls-playback-rate-button {
 #widget .btn_next_in_queue:after {
     border-width: 15.5px !important;
 }
+
+#widget img {
+    max-width: 100% !important;
+    height: auto;
+}
+
+
+@container (max-width: 26rem) {
+    #widget {
+        padding-bottom: 10px !important;
+    }
+
+    #widget .game_area_purchase_platform,
+    #widget .game_purchase_action {
+        position: static !important;
+        margin: 8px 15px 0 !important;
+        float: none !important;
+    }
+
+    #widget .game_purchase_action_bg {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    #widget .next_in_queue_area {
+        margin-left: 0 !important;
+        width: auto !important;
+    }
+
+    #widget .btn_next_in_queue {
+        height: auto !important;
+        min-height: 30px !important;
+    }
+}
 </style>
 `.trim();
 

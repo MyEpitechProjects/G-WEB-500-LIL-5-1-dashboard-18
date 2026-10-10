@@ -10,8 +10,8 @@ export const SERVICES: ServiceMeta[] = [
 	{
 		name: 'weather',
 		label: 'Météo',
-		description: 'Conditions météo actuelles d’une ville. Aucun compte externe requis.',
-		defaultSubscribed: true
+		description: 'Conditions météo et prévisions d’une ville.',
+		defaultSubscribed: false
 	},
 	{
 		name: 'steam',
@@ -25,7 +25,7 @@ export const SERVICES: ServiceMeta[] = [
 		name: 'sncf',
 		label: 'SNCF',
 		description: 'Recherche de trajets et informations sur les perturbations du réseau SNCF.',
-		defaultSubscribed: true
+		defaultSubscribed: false
 	}
 ];
 

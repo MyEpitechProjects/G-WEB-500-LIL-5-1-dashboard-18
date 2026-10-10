@@ -166,12 +166,14 @@
 <style>
 	.fields {
 		display: grid;
+		min-width: 0;
 		gap: 0.75rem;
 	}
 
 	.field {
 		display: grid;
 		gap: 0.25rem;
+		min-width: 0;
 	}
 
 	.label {
@@ -195,6 +197,8 @@
 		padding: 0.35rem 0.5rem;
 		font: inherit;
 		font-size: 0.85rem;
+		width: 100%;
+		min-width: 0;
 	}
 
 	input[type='checkbox'] {
@@ -273,6 +277,8 @@
 		border: 1px solid var(--border);
 		border-radius: 4px;
 		box-shadow: 0 4px 12px rgb(0 0 0 / 20%);
+		max-height: 14rem;
+		overflow-y: auto;
 	}
 
 	.option {
@@ -295,5 +301,20 @@
 		padding: 0.4rem 0.5rem;
 		font-size: 0.75rem;
 		color: var(--text-muted);
+	}
+
+	@media (max-width: 40rem) {
+		input[type='text'],
+		input[type='url'],
+		input[type='number'],
+		select {
+			font-size: 1rem;
+			padding: 0.5rem 0.6rem;
+		}
+
+		.option {
+			padding: 0.6rem 0.5rem;
+			font-size: 0.9rem;
+		}
 	}
 </style>

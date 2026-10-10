@@ -24,7 +24,7 @@ export interface WeatherData {
 	cloudCover: number;
 }
 
-interface GeoPlace {
+export interface GeoPlace {
 	name: string;
 	latitude: number;
 	longitude: number;
@@ -48,7 +48,7 @@ interface WeatherResponse {
 	current: WeatherCurrent;
 }
 
-async function geocodeCity(city: string, fetch: typeof globalThis.fetch, signal: AbortSignal): Promise<GeoPlace> {
+export async function geocodeCity(city: string, fetch: typeof globalThis.fetch, signal: AbortSignal): Promise<GeoPlace> {
 	const url = new URL(
 		'https://geocoding-api.open-meteo.com/v1/search'
 	);

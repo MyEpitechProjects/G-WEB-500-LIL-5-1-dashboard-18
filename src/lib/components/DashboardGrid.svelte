@@ -87,6 +87,7 @@
 		grid-column: span min(var(--w), 3);
 		grid-row: span var(--h);
 		min-height: 0;
+		min-width: 0;
 	}
 
 	.cell:focus-visible {
@@ -100,12 +101,17 @@
 	}
 
 	@media (max-width: 40rem) {
+		/* mobile : une colonne, la hauteur suit le contenu (plus de lignes fixes
+		   qui font chevaucher ou rogner les widgets) */
 		.grid {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+			grid-auto-rows: auto;
 		}
 
 		.cell {
 			grid-column: span 1;
+			grid-row: span 1;
+			min-height: 9rem;
 		}
 	}
 </style>

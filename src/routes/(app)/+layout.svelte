@@ -100,4 +100,25 @@
 	main {
 		padding: 1.25rem;
 	}
+
+	@media (max-width: 40rem) {
+		.topbar {
+			gap: 0.5rem 0.75rem;
+			padding: 0.6rem 0.75rem;
+		}
+
+		nav {
+			order: 3;
+			flex: 1 1 100%;
+			margin-right: 0;
+		}
+
+		.user {
+			margin-left: auto;
+		}
+
+		main {
+			padding: 0.75rem;
+		}
+	}
 </style>

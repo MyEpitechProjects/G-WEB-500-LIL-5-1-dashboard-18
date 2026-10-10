@@ -45,7 +45,9 @@ class DashboardState {
 
 	async remove(id: string): Promise<void> {
 		const before = this.instances;
-		this.instances = before.filter((i) => i.id !== id).map((i, position) => ({ ...i, position }));
+		this.instances = before
+			.filter((i) => i.id !== id)
+			.map((i, position) => (i.position === position ? i : { ...i, position }));
 		await this.#sync(before, () => fetch(`/api/dashboard/${id}`, { method: 'DELETE' }));
 	}
 
@@ -57,7 +59,7 @@ class DashboardState {
 		const next = [...before];
 		const [moved] = next.splice(from, 1);
 		next.splice(toIndex, 0, moved);
-		this.instances = next.map((i, position) => ({ ...i, position }));
+		this.instances = next.map((i, position) => (i.position === position ? i : { ...i, position }));
 		await this.#sync(before, () =>
 			fetch('/api/dashboard/order', {
 				method: 'PUT',

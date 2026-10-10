@@ -46,6 +46,11 @@
 			.map((p) => p.label) ?? []
 	);
 
+	/** mobile : retour au catalogue pour choisir un autre widget */
+	function back(): void {
+		selected = null;
+	}
+
 	function confirm(): void {
 		if (!selected || missing.length > 0) return;
 		onsubmit({
@@ -68,7 +73,7 @@
 			<button onclick={onclose} aria-label="Fermer">&#10005;</button>
 		</header>
 
-		<div class="content">
+		<div class="content" class:has-selection={selected !== null}>
 			{#if !editing}
 				<div class="catalog">
 					{#each services as service (service.name)}
@@ -94,6 +99,9 @@
 
 			<div class="config">
 				{#if selected}
+					{#if !editing}
+						<button type="button" class="back" onclick={back}>&#8249; Changer de widget</button>
+					{/if}
 					<ParamsForm
 						specs={selected.params}
 						bind:values={params}
@@ -133,12 +141,13 @@
 
 	.panel {
 		width: min(46rem, 100%);
-		max-height: 85vh;
+		max-height: min(85vh, 85dvh);
 		display: flex;
 		flex-direction: column;
 		background: var(--surface);
 		border: 1px solid var(--border);
 		border-radius: 8px;
+		min-width: 0;
 	}
 
 	header,
@@ -164,27 +173,25 @@
 		border: 0;
 		color: var(--text-muted);
 		cursor: pointer;
+		padding: 0.25rem 0.4rem;
 	}
 
 	.content {
 		display: grid;
-		grid-template-columns: 16rem 1fr;
+		grid-template-columns: 16rem minmax(0, 1fr);
 		min-height: 0;
 		flex: 1;
 	}
 
-	.content:has(.catalog) {
-		grid-template-columns: 16rem 1fr;
-	}
-
 	.content:not(:has(.catalog)) {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.catalog {
 		border-right: 1px solid var(--border);
 		overflow: auto;
 		padding: 0.75rem;
+		min-width: 0;
 	}
 
 	.catalog h3 {
@@ -243,6 +250,11 @@
 	.config {
 		padding: 1rem;
 		overflow: auto;
+		min-width: 0;
+	}
+
+	.back {
+		display: none;
 	}
 
 	.empty {
@@ -253,6 +265,7 @@
 
 	footer {
 		justify-content: flex-end;
+		flex-wrap: wrap;
 		border-top: 1px solid var(--border);
 	}
 
@@ -286,5 +299,78 @@
 	.primary:disabled {
 		opacity: 0.45;
 		cursor: not-allowed;
+	}
+
+	/* ---- mobile : feuille plein écran, catalogue puis configuration ---- */
+	@media (max-width: 40rem) {
+		.backdrop {
+			padding: 0;
+			place-items: end stretch;
+		}
+
+		.panel {
+			width: 100%;
+			max-height: 92vh;
+			max-height: 92dvh;
+			border-radius: 12px 12px 0 0;
+			border-bottom: 0;
+		}
+
+		.content,
+		.content:not(:has(.catalog)) {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: none;
+			overflow: auto;
+		}
+
+		/* un seul bloc visible à la fois : catalogue, puis configuration */
+		.catalog {
+			border-right: 0;
+			overflow: visible;
+		}
+
+		.content.has-selection .catalog {
+			display: none;
+		}
+
+		.content:not(.has-selection) .config {
+			display: none;
+		}
+
+		.config {
+			overflow: visible;
+		}
+
+		.entry {
+			padding: 0.7rem 0.75rem;
+		}
+
+		.back {
+			display: inline-flex;
+			align-items: center;
+			margin: 0 0 0.75rem;
+			padding: 0.3rem 0.6rem;
+			font: inherit;
+			font-size: 0.82rem;
+			color: var(--accent);
+			background: transparent;
+			border: 1px solid var(--border);
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		footer {
+			padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+		}
+
+		.missing {
+			flex: 1 1 100%;
+			margin-right: 0;
+		}
+
+		footer button {
+			flex: 1 1 0;
+			padding: 0.6rem 0.75rem;
+		}
 	}
 </style>
