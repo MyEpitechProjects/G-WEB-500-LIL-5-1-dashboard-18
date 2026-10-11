@@ -200,7 +200,6 @@ src/
 | ----- | ----- | ----- | 
 | `svelte` (5), `@sveltejs/kit` | UI components with runes, routing, server routes, hooks | frontend + backend | 
 | `@sveltejs/adapter-node` | production build as a standalone Node server | backend | 
-| `vite`, `@vitejs/plugin-basic-ssl` | dev server and bundler, HTTPS in development | tooling | 
 | `better-sqlite3` | synchronous SQLite driver | database | 
 | `drizzle-orm`, `drizzle-kit` | typed queries, schema, SQL migrations | database | 
 | `nodemailer` | confirmation emails over SMTP | backend | 
@@ -267,7 +266,7 @@ Each layer was compared on the same criteria. Ratings are relative to this proje
 | Small team, short deadline | stack the team can master quickly, little boilerplate | Svelte 5 + TypeScript end to end | 
 | Responsive and accessible interface | scoped CSS, native HTML elements | Svelte components with plain CSS | 
 
-> **Team context** — group of **[N students]**; shared prior experience: **[e.g. TypeScript/JavaScript, SQL, Docker, Git]**; new for the group: **[e.g. Svelte 5, Drizzle, OpenID]**. *(Fill in before the presentation.)* We chose one language for every layer so that any member can work on the UI, the API or the database code, and so that reviewing each other's work does not require learning a second stack. PostgreSQL, React or Laravel would have required either more setup or a language that only part of the group knows.
+> **Team context** — group of **2 students**; shared prior experience: **e.g. TypeScript/JavaScript, SQL, Docker, Git, Svelte 5, Drizzle**; new for the group: **OpenID**.  We chose one language for every layer so that any member can work on the UI, the API or the database code, and so that reviewing each other's work does not require learning a second stack. PostgreSQL, React or Laravel would have required either more setup or a language that only part of the group knows.
 
 ## 🧪 Proof of concept
 

@@ -129,6 +129,18 @@
 		line-height: 1;
 	}
 
+	@media (hover: none), (max-width: 40rem) {
+		.actions {
+			opacity: 1;
+		}
+
+		.actions button {
+			padding: 0.4rem 0.55rem;   /* zone de toucher plus grande */
+			font-size: 1rem;
+		}
+	}
+
+
 	.actions button:hover {
 		background: var(--surface-hover);
 		color: var(--text);

@@ -43,10 +43,22 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		const fromData = await fromRes.json();
 		const toData = await toRes.json();
+		const fromId = fromData.places?.find(
+			(place: any) =>
+				place.stop_area?.administrative_regions?.some(
+					(region: any) => region.level === 8 && region.name === from
+				)
+		)?.id;
 
-		const fromId = fromData.places?.[0]?.id;
-		const toId = toData.places?.[0]?.id;
+		const toId = toData.places?.find(
+			(place: any) =>
+				place.stop_area?.administrative_regions?.some(
+					(region: any) => region.level === 8 && region.name === to
+				)
+		)?.id;
 
+		console.log(fromId);
+		console.log(toId);
 		if (!fromId || !toId) {
 			return new Response(JSON.stringify({ error: 'Gare non trouvée' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
 		}
@@ -70,7 +82,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		});
 			return new Response(JSON.stringify({ error: 'SNCF service unavailable' }), { status: 502, headers: { 'Content-Type': 'application/json' } });
 		}
-
 		const journeysData = await journeysRes.json();
 
 		const journeys = (journeysData.journeys ?? []).slice(0, count).map((journey: {

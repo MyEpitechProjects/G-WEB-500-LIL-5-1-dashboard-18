@@ -16,7 +16,7 @@ class Timer {
 	#paused = false;
 
 	register(id: string, task: TimerTask): () => void {
-		this.#tasks.set(id, { ...task, nextRun: Date.now(), running: false });
+		this.#tasks.set(id, { ...task, nextRun: Date.now() + task.intervalMs, running: false });
 		this.#start();
 		return () => this.unregister(id);
 	}

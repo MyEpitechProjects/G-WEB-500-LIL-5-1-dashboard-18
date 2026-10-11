@@ -7,12 +7,6 @@
 
 	let draggedId = $state<string | null>(null);
 
-	/**
-	 * Seule l'instance dont on a pressé l'entête est réellement `draggable`.
-	 * L'attribut draggable doit être porté par l'élément déplacé (la cellule),
-	 * on l'active donc à la volée quand le pointeur descend sur la poignée,
-	 * et on le désactive dès que le geste est terminé.
-	 */
 	let handleId = $state<string | null>(null);
 
 	function onPointerDown(event: PointerEvent, id: string): void {
@@ -34,7 +28,6 @@
 		endGesture();
 	}
 
-	/** Déplacement au clavier, pour rester utilisable sans souris. */
 	function onKeydown(event: KeyboardEvent, index: number, id: string): void {
 		if (!event.altKey) return;
 		if (event.key === 'ArrowRight') {
@@ -79,7 +72,7 @@
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-		grid-auto-rows: 15rem;
+		grid-auto-rows: minmax(15rem, auto);
 		gap: 0.75rem;
 	}
 
@@ -101,8 +94,6 @@
 	}
 
 	@media (max-width: 40rem) {
-		/* mobile : une colonne, la hauteur suit le contenu (plus de lignes fixes
-		   qui font chevaucher ou rogner les widgets) */
 		.grid {
 			grid-template-columns: minmax(0, 1fr);
 			grid-auto-rows: auto;

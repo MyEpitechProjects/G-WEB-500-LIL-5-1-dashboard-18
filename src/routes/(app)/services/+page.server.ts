@@ -17,9 +17,11 @@ const ERRORS: Record<string, string> = {
 };
 
 export const load: PageServerLoad = ({ locals, url }) => {
-	if (!locals.user) redirect(303, '/login');
+	const user = locals.user;
+	if (!user)
+		redirect(303, '/login');
 	registerAllWidgets();
-	const subscribed = new Set(getSubscribedServices(locals.user.id));
+	const subscribed = new Set(getSubscribedServices(user.id));
 	const widgetCount = new Map(listServices().map((s) => [s.name, s.widgets.length]));
 
 	return {
@@ -27,7 +29,7 @@ export const load: PageServerLoad = ({ locals, url }) => {
 			...s,
 			subscribed: subscribed.has(s.name),
 			widgets: widgetCount.get(s.name) ?? 0,
-			linked: s.provider ? getLinkedAccount(locals.user.id, s.provider) !== null : false
+			linked: s.provider ? getLinkedAccount(user.id, s.provider) !== null : false
 		})),
 		notice: url.searchParams.get('linked') ? 'Compte Steam lié, service activé.' : null,
 		error: ERRORS[url.searchParams.get('error') ?? ''] ?? null

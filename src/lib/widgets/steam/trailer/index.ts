@@ -8,8 +8,9 @@ export interface SteamParams {
 	lang: string;
 	sales_only: boolean;
 	max_price: number;
-	rotate: number;
-	[key: string]: string | number | boolean;
+	game_tag: string[];
+	exclude_game_tag: string[];
+	[key: string]: string | number | boolean | string[];
 }
 
 export interface SteamGame {
@@ -18,7 +19,7 @@ export interface SteamGame {
 }
 
 export interface SteamData {
-	games: string;
+	games: string[];
 }
 
 export const trailerLoop = defineWidget<SteamParams, SteamData>({
@@ -74,33 +75,25 @@ export const trailerLoop = defineWidget<SteamParams, SteamData>({
 		{
 			name: 'max_price',
 			label: 'Max games prices',
-			type: 'string',
+			type: 'integer',
 			default: -1,
 			required: true,
 			help: '0 for only show free games, -1 to show all games'
 		}
 	],
 	async load({ params, fetch, signal }) {
-		const tags = params.game_tag;
-		const untags = params.exclude_game_tag
-		const tagIds = Array.isArray(tags)
-			? tags
-					.map((tag) => steamTagsIds[tag])
-					.filter(Boolean)
-					.join(',')
-			: '';
-		const untagIds = Array.isArray(untags)
-			? untags
-					.map((tag) => steamTagsIds[tag])
-					.filter(Boolean)
-					.join(',')
-			: '';
+		const ids: Record<string, string> = steamTagsIds;
+		const toIds = (tags: string[]) =>
+			tags.map((tag) => ids[tag]).filter(Boolean).join(',');
+		const tagIds = toIds(params.game_tag);
+		const untagIds = toIds(params.exclude_game_tag);
+
 		const query = new URLSearchParams({
 			lang: String(params.lang),
 			tags: tagIds,
-			max_price: Number(params.max_price),
-			sales: Number(params.sales_only),
-			untags: untagIds,
+			max_price: String(params.max_price),
+			sales: params.sales_only ? '1' : '0',
+			untags: untagIds
 		});
 		const response = await fetch(`/api/steam/search?${query.toString()}`, {
 			signal

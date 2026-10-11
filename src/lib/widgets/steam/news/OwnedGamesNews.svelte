@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WidgetRenderProps } from '$lib/core/types';
-	import type { NewsItem, OwnedGamesNewsParams } from './ownedGamesNews';
+	import type { NewsItem, OwnedGamesNewsParams } from './index';
 
 	let { data }: WidgetRenderProps<OwnedGamesNewsParams, NewsItem[]> = $props();
 
