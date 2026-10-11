@@ -13,19 +13,9 @@ services:
       STEAM_API_KEY: ${STEAM_API_KEY:-}
       # Clé de l'API SNCF (https://numerique.sncf.com/), requise pour les widgets SNCF
       SNCF_API_KEY: ${SNCF_API_KEY:-}
-      # Boîte mail de test (Mailpit) : les emails de confirmation y arrivent, sur http://localhost:8025
-      SMTP_HOST: mailpit
-      SMTP_PORT: 1025
-      MAIL_FROM: "Dashboard <no-reply@dashboard.local>"
+      # false (défaut) : compte activé immédiatement, aucun lien généré ; true : lien de confirmation par email à l'inscription
+      ACCOUNT_NEED_VERIFICATION: ${ACCOUNT_NEED_VERIFICATION:-true}
     volumes:
       - db-data:/data
-    depends_on:
-      - mailpit
-
-  mailpit:
-    image: axllent/mailpit
-    ports:
-      - "8025:8025"
-
 volumes:
   db-data:

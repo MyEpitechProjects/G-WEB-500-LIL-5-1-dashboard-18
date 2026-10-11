@@ -12,6 +12,10 @@
 	<p class="notice" role="status">Adresse confirmée. Vous pouvez vous connecter.</p>
 {/if}
 
+{#if data.created}
+	<p class="notice" role="status">Compte créé. Vous pouvez vous connecter.</p>
+{/if}
+
 {#if data.registered}
 	<p class="notice" role="status">
 		Un lien de confirmation a été envoyé à <strong>{data.email}</strong>. Il est valable 24 h : vous

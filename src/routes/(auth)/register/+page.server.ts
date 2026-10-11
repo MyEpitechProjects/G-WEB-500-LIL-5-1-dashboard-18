@@ -10,6 +10,7 @@ import {
 	validateRegistration
 } from '$lib/server/auth';
 import { sendConfirmationEmail } from '$lib/server/mail';
+import { accountNeedsVerification } from '$lib/server/config';
 
 type FormErrors = { email?: string; username?: string; password?: string; form?: string };
 const NO_VALUES = { email: '', username: '' };
@@ -39,7 +40,18 @@ export const actions: Actions = {
 		if (existing)
 			return fail(400, { errors: { email: 'Un compte existe déjà avec cet email.' } as FormErrors, values });
 		const id = newUserId();
-		db.insert(users).values({ id, email, username, passwordHash: await hashPassword(password) }).run();
+		const needsVerification = accountNeedsVerification();
+		db.insert(users)
+			.values({
+				id,
+				email,
+				username,
+				passwordHash: await hashPassword(password),
+				emailVerifiedAt: needsVerification ? null : new Date()
+			})
+			.run();
+		if (!needsVerification)
+			redirect(303, `/login?created=1&email=${encodeURIComponent(email)}`);
 		const token = createEmailToken(id);
 		try {
 			await sendConfirmationEmail(email, username, `${url.origin}/confirm?token=${token}`);

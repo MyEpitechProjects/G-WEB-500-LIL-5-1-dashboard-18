@@ -50,7 +50,10 @@ Create an account, open the confirmation link from Mailpit, then log in.
 
 3. For the `owned_games_news` widget to see your library, your Steam profile's **Game details** must be public.
 
-> Steam does not implement OAuth 2.0: accounts are linked with **OpenID 2.0** (the user proves their SteamID64). Game data is then fetched server-side using the API key.
+### 🚄 SNCF setup
+
+1. Request a API key at <https://numerique.sncf.com/startup/api/token-developpeur/> (you will recieve it by email) and put it in `.env` as `SNCF_API_KEY`.
+
 
 ## 🏃‍♂️ Local Development
 

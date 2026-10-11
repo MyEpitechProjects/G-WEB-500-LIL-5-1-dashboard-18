@@ -5,7 +5,8 @@ type Transport = ReturnType<typeof nodemailer.createTransport>;
 let transport: Transport | null = null;
 
 function getTransport(): Transport | null {
-	if (!env.SMTP_HOST) return null;
+	if (!env.SMTP_HOST)
+		return null;
 	transport ??= nodemailer.createTransport({
 		host: env.SMTP_HOST,
 		port: Number(env.SMTP_PORT ?? 587),

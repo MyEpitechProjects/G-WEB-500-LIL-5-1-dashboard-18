@@ -11,6 +11,7 @@ import {
 	verifyPassword
 } from '$lib/server/auth';
 import { sendConfirmationEmail } from '$lib/server/mail';
+import { accountNeedsVerification } from '$lib/server/config';
 
 export const load: PageServerLoad = ({ locals, url }) => {
 	if (locals.user)
@@ -18,6 +19,7 @@ export const load: PageServerLoad = ({ locals, url }) => {
 	return { 
 		confirmed: url.searchParams.get('confirmed') === '1',
 		registered: url.searchParams.get('registered') === '1',
+		created: url.searchParams.get('created') === '1',
 		email: url.searchParams.get('email')
 	};
 };
@@ -38,7 +40,9 @@ export const actions: Actions = {
 		if (!(await verifyPassword(password, user.passwordHash))) {
 			return fail(400, { error: 'Email ou mot de passe incorrect.', email });
 		}
-		if (!user.emailVerifiedAt) {
+		if (!user.emailVerifiedAt && !accountNeedsVerification()) {
+			getDb().update(users).set({ emailVerifiedAt: new Date() }).where(eq(users.id, user.id)).run();
+		} else if (!user.emailVerifiedAt) {
 			try {
 				const token = createEmailToken(user.id);
 				await sendConfirmationEmail(user.email, user.username, `${url.origin}/confirm?token=${token}`);
