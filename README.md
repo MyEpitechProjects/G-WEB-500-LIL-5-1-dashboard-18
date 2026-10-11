@@ -60,12 +60,22 @@ Create an account, open the confirmation link from Mailpit, then log in.
 Requires Node.js 22.
 <https://nodejs.org/>
 
+Requires Docker.
+<https://github.com/docker>
+
 ```bash
 cp .env.example .env
 npm install
-npm run dev          # https://localhost:8080 (self-signed certificate)
+npm run dev               # http://localhost:8080
 ```
 
+or
+
+```bash
+docker compose up --build # http://localhost:8080
+```
+
+If `ACCOUNT_NEED_VERIFICATION` is set, accounts are auto-confirmed so no mail is send or printed in the server console.
 Without `SMTP_HOST`, confirmation links are printed directly in the server console.
 
 Useful scripts: `npm run check` (type checking), `npm run build`, `npm run db:generate` (generate a migration after editing `src/lib/server/db/schema.ts`). Migrations in `drizzle/` are applied automatically at startup.
@@ -78,6 +88,7 @@ Useful scripts: `npm run check` (type checking), `npm run build`, `npm run db:ge
 | `STEAM_API_KEY` | Steam Web API key | — | 
 | `SNCF_API_KEY` | SNCF API key, required by the SNCF widgets | — | 
 | `DATABASE_PATH` | SQLite database file | `./data/dashboard.db` (`/data/dashboard.db` in Docker) | 
+| `ACCOUNT_NEED_VERIFICATION` | Auto-confirm accounts | false (accounts are auto-confirmed) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` | Outgoing mail | links logged in the console if no `SMTP_HOST` | 
 
 ## 📁 Project Structure Overview
