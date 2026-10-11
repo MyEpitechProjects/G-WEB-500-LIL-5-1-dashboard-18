@@ -14,7 +14,7 @@ services:
       # Clé de l'API SNCF (https://numerique.sncf.com/), requise pour les widgets SNCF
       SNCF_API_KEY: ${SNCF_API_KEY:-}
       # false (défaut) : compte activé immédiatement, aucun lien généré ; true : lien de confirmation par email à l'inscription
-      ACCOUNT_NEED_VERIFICATION: ${ACCOUNT_NEED_VERIFICATION:-true}
+      ACCOUNT_NEED_VERIFICATION: ${ACCOUNT_NEED_VERIFICATION:-false}
     volumes:
       - db-data:/data
 volumes:

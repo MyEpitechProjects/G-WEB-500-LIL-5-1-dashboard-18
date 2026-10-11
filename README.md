@@ -55,11 +55,9 @@ docker-compose up
 
 * App: <http://localhost:8080> (`/about.json` is public).
 
-* Test mailbox (Mailpit): <http://localhost:8025> — confirmation emails land here.
-
 * The SQLite database is stored in the `db-data` volume.
 
-Create an account, open the confirmation link from Mailpit, then log in.
+Create an account, then log in.
 
 ### 🎮 Steam setup
 
@@ -110,7 +108,7 @@ A scripted path to show every feature of the application (about 5 minutes):
 
 1. **Discovery endpoint**: open <http://localhost:8080/about.json> — services, widgets and their parameters (`string` / `integer`), generated from the same registry as the UI.
 
-2. **Registration**: create an account. With `ACCOUNT_NEED_VERIFICATION=true`, open the link received in Mailpit (<http://localhost:8025>); with `false`, log in directly. Try logging in before confirming: access is refused and a new link is sent.
+2. **Registration**: create an account. Open the link received (if `ACCOUNT_NEED_VERIFICATION` is `true`); then, log in. Try logging in before confirming: access is refused and a new link is sent.
 
 3. **Services**: open the **Services** page. Subscribe to *Weather* and *SNCF* (one click, no account) and link *Steam* (OpenID redirect to Steam, then automatic subscription).
 
@@ -148,7 +146,7 @@ flowchart LR
     Browser -->|"direct, no key"| OpenMeteo["Open-Meteo"]
     Routes -->|"API key, 10 min cache"| Steam["Steam Web API and Store"]
     Routes -->|"API key"| SNCF["SNCF API"]
-    Routes -->|"SMTP"| Mail["Mailpit or SMTP provider"]
+    Routes -->|"SMTP"| Mail["SMTP provider"]
     Browser -.->|"OpenID redirect"| Steam
 ```
 
@@ -341,7 +339,7 @@ Planned improvements, each small because the data model already cascades: a *Del
 | Open-Meteo | free for non-commercial use | fewer than 10,000 calls/day, 5,000/hour, 600/minute | commercial use needs a paid plan; throttling when a network shares one IP | non-commercial school project; calls come from each user's browser | 
 | Steam Web API | free key | per-key daily limit set by Steam's terms (about 100,000 calls/day, to verify) | key revoked if the terms are broken; one shared key for all users | responses cached 10 minutes by SteamID / game | 
 | Steam store widget (`store.steampowered.com/widget/<appid>`) | free | none documented, **unofficial, no guarantee** | the HTML we parse with `cheerio` can change and silently break the trailer widget | cache per game, widget shows an error state, parsing isolated in one file | 
-| SMTP | Mailpit locally (free) | — | a real SMTP provider is needed in production; mails need SPF/DKIM to avoid the spam folder | SMTP settings come from the environment | 
+| SMTP | SMTP Provider (optional) | — | recommanded in production; mails need SPF/DKIM to avoid the spam folder | SMTP settings come from the environment | 
 
 Limits and prices change: re-check each provider's page before any deployment.
 
