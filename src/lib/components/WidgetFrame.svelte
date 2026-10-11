@@ -135,7 +135,7 @@
 		}
 
 		.actions button {
-			padding: 0.4rem 0.55rem;   /* zone de toucher plus grande */
+			padding: 0.4rem 0.55rem;
 			font-size: 1rem;
 		}
 	}
